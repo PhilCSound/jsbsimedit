@@ -1,45 +1,38 @@
 #include "GeneralInformationSubsystem.hpp"
-#include "XML/XMLLoad.hpp"
-#include "Aircraft.hpp"
-#include "User.hpp"
-#include "FileMetadata.hpp"
-#include "Config.hpp"
-#include "XML/XMLWriter.hpp"
-#include "Validation.hpp"
-#include "inc/XML_api.hpp"
 
-#include <filesystem> // For `operations
 namespace fs = std::filesystem;
 
-GeneralInformationSubsystem::GeneralInformationSubsystem()
+GeneralInformationSubsystem::GeneralInformationSubsystem(std::shared_ptr<Gtk::Application> &app)
+    : Subsystem{"General Information", app}
 {
-    m_Name = "General Information";
 }
 
 /////////
-struct ReferencesColumns : public Gtk::TreeModel::ColumnRecord {
-    Gtk::TreeModelColumn<int> id;
-    Gtk::TreeModelColumn<std::string> refID;
-    Gtk::TreeModelColumn<std::string> author;
-    Gtk::TreeModelColumn<std::string> title;
-    Gtk::TreeModelColumn<std::string> date;
+struct ReferencesColumns : public Gtk::TreeModel::ColumnRecord
+{
+  Gtk::TreeModelColumn<int> id;
+  Gtk::TreeModelColumn<std::string> refID;
+  Gtk::TreeModelColumn<std::string> author;
+  Gtk::TreeModelColumn<std::string> title;
+  Gtk::TreeModelColumn<std::string> date;
 
-    ReferencesColumns() {
-        add(id);
-        add(refID);
-        add(author);
-        add(title);
-        add(date);
-    }
+  ReferencesColumns()
+  {
+    add(id);
+    add(refID);
+    add(author);
+    add(title);
+    add(date);
+  }
 };
 
- // Create an instance
+// Create an instance
 ////////
 
 void GeneralInformationSubsystem::Create()
 {
-  m_Grid.set_row_spacing(10);
-  m_Grid.set_column_spacing(10);
+  m_grid.set_row_spacing(10);
+  m_grid.set_column_spacing(10);
 
   // Row tracking variable
   int row = 0;
@@ -52,7 +45,6 @@ void GeneralInformationSubsystem::Create()
   fs::path fullPath = basePath / xmlFilePath;
   fullPath = fs::canonical(fullPath);
 
-
   // an example of accessing the xml file
   // fetch the ptr to the open xml document
   auto node = xmlptr()->GetNode("fdm_config");
@@ -62,17 +54,19 @@ void GeneralInformationSubsystem::Create()
   auto node_description = xmlptr()->GetNode("/fdm_config/fileheader/description");
   auto node_notes = xmlptr()->GetNode("/fdm_config/fileheader/note");
 
-
   // Aircraft Name
   auto aircraftNameLabel = Gtk::make_managed<Gtk::Label>("Aircraft Name");
   auto aircraftNameTextbox = Gtk::make_managed<Gtk::Entry>();
-  aircraftNameTextbox->set_text( node.GetAttribute("name").second );
+  aircraftNameTextbox->set_text(node.GetAttribute("name").second);
 
   // File Path
   auto filePathLabel = Gtk::make_managed<Gtk::Label>("File Path");
-  if (!m_FilePath.empty()) {
+  if (!m_FilePath.empty())
+  {
     m_filePathTextbox.set_text(m_FilePath);
-  } else {
+  }
+  else
+  {
     std::cerr << "Warning: m_FilePath is empty in Create()" << std::endl;
     m_filePathTextbox.set_text(fullPath.string());
   }
@@ -82,13 +76,13 @@ void GeneralInformationSubsystem::Create()
   auto releaseLevelDropdown = Gtk::make_managed<Gtk::ComboBoxText>();
   releaseLevelDropdown->append("ALPHA"); // load release levels
   releaseLevelDropdown->append("BETA");
-  releaseLevelDropdown->set_active(0); // sets ALPHA default
+  releaseLevelDropdown->set_active(0);           // sets ALPHA default
   m_ReleaseLevelDropdown = releaseLevelDropdown; // Save reference for later
 
-  // Configuration Version 
+  // Configuration Version
   auto configVersionLabel = Gtk::make_managed<Gtk::Label>("Configuration Version");
   auto configVersionTextbox = Gtk::make_managed<Gtk::Entry>();
-  configVersionTextbox->set_text( node.GetAttribute("version").second ); // Load configuration version here
+  configVersionTextbox->set_text(node.GetAttribute("version").second); // Load configuration version here
 
   // Flight Model Version
   auto flightModelVersionLabel = Gtk::make_managed<Gtk::Label>("Flight Model Version");
@@ -98,9 +92,9 @@ void GeneralInformationSubsystem::Create()
   // Author
   auto authorLabel = Gtk::make_managed<Gtk::Label>("Author");
   auto authorTextbox = Gtk::make_managed<Gtk::Entry>();
-  authorTextbox->set_text( node_author.GetText() ); // Load author name here
+  authorTextbox->set_text(node_author.GetText()); // Load author name here
 
-  //Email
+  // Email
   auto emailLabel = Gtk::make_managed<Gtk::Label>("Email");
   auto emailTextbox = Gtk::make_managed<Gtk::Entry>();
   emailTextbox->set_text(""); // Load email here
@@ -151,10 +145,10 @@ void GeneralInformationSubsystem::Create()
   // File Date
   auto fileDateLabel = Gtk::make_managed<Gtk::Label>("File Date");
   auto fileDateTextbox = Gtk::make_managed<Gtk::Entry>();
-  fileDateTextbox->set_text( node_fileDate.GetText() ); // Load FileDate name here
+  fileDateTextbox->set_text(node_fileDate.GetText()); // Load FileDate name here
 
   // References
-  ReferencesColumns referencesColumns; //Initial reference Columns Object
+  ReferencesColumns referencesColumns; // Initial reference Columns Object
   auto referencesLabel = Gtk::make_managed<Gtk::Label>("References");
   // Create ListStore and TreeView for references
   auto referencesStore = Gtk::ListStore::create(referencesColumns); // Define this model
@@ -178,7 +172,7 @@ void GeneralInformationSubsystem::Create()
 
   referencesFrame->set_child(*referencesScrolledWindow);
 
-  referencesTreeView->get_column(0)->set_fixed_width(50); // ID column
+  referencesTreeView->get_column(0)->set_fixed_width(50);  // ID column
   referencesTreeView->get_column(1)->set_fixed_width(150); // Ref ID column
   referencesTreeView->get_column(2)->set_fixed_width(150); // Author column
   referencesTreeView->get_column(3)->set_fixed_width(300); // Title column
@@ -190,17 +184,19 @@ void GeneralInformationSubsystem::Create()
   auto references = parentNode.GetChildren();
 
   int i = 1; // Row ID
-  for (const auto& reference : references) {
+  for (const auto &reference : references)
+  {
     // Create a mutable copy of the reference node
-    auto mutableReference = const_cast<JSBEdit::XMLNode&>(reference);
+    auto mutableReference = const_cast<JSBEdit::XMLNode &>(reference);
 
-    if (mutableReference.GetName() == "reference") { // Check if the node is a <reference>
+    if (mutableReference.GetName() == "reference")
+    { // Check if the node is a <reference>
       auto tableRow = *(referencesStore->append());
-        
-      tableRow[referencesColumns.refID] = mutableReference.GetAttribute("refID").second;  // Extract ref ID
-      tableRow[referencesColumns.author] = mutableReference.GetAttribute("author").second;  // Extract author
-      tableRow[referencesColumns.title] = mutableReference.GetAttribute("title").second;  // Extract title
-      tableRow[referencesColumns.date] = mutableReference.GetAttribute("date").second;  // Extract date
+
+      tableRow[referencesColumns.refID] = mutableReference.GetAttribute("refID").second;   // Extract ref ID
+      tableRow[referencesColumns.author] = mutableReference.GetAttribute("author").second; // Extract author
+      tableRow[referencesColumns.title] = mutableReference.GetAttribute("title").second;   // Extract title
+      tableRow[referencesColumns.date] = mutableReference.GetAttribute("date").second;     // Extract date
 
       tableRow[referencesColumns.id] = i++; // Increase index table by 1
     }
@@ -214,10 +210,10 @@ void GeneralInformationSubsystem::Create()
 
   // Set up TextView content and appearance for Limitations
   limitationsTextView->get_buffer()->set_text(""); // Placeholder text
-  
+
   // Configure the ScrolledWindow
   limitationsScrolledWindow->set_min_content_height(100); // Set the height for the text area
-  limitationsScrolledWindow->set_min_content_width(300); // Set the height for the text area  
+  limitationsScrolledWindow->set_min_content_width(300);  // Set the height for the text area
   limitationsScrolledWindow->set_child(*limitationsTextView);
   limitationsScrolledWindow->set_policy(Gtk::PolicyType::ALWAYS, Gtk::PolicyType::ALWAYS);
 
@@ -235,10 +231,10 @@ void GeneralInformationSubsystem::Create()
 
   // Set up TextView content and appearance for Notes
   notesTextView->get_buffer()->set_text(node_notes.GetText()); // Placeholder text
-  
+
   // Configure the ScrolledWindow
   notesScrolledWindow->set_min_content_height(100); // Set the height for the text area
-  notesScrolledWindow->set_min_content_width(300); // Set the height for the text area  
+  notesScrolledWindow->set_min_content_width(300);  // Set the height for the text area
   notesScrolledWindow->set_child(*notesTextView);
   notesScrolledWindow->set_policy(Gtk::PolicyType::ALWAYS, Gtk::PolicyType::ALWAYS);
 
@@ -249,35 +245,35 @@ void GeneralInformationSubsystem::Create()
   notesTextView->set_wrap_mode(Gtk::WrapMode::WORD);
 
   // Attach widgets to the grid
-  m_Grid.attach(*aircraftNameLabel, 0, row);
-  m_Grid.attach(*aircraftNameTextbox, 1, row, 2);
-  m_Grid.attach(*filePathLabel, 3, row);
-  m_Grid.attach(m_filePathTextbox, 4, row++, 40);
+  m_grid.attach(*aircraftNameLabel, 0, row);
+  m_grid.attach(*aircraftNameTextbox, 1, row, 2);
+  m_grid.attach(*filePathLabel, 3, row);
+  m_grid.attach(m_filePathTextbox, 4, row++, 40);
 
-  m_Grid.attach(*releaseLevelLabel, 0, row);
-  m_Grid.attach(*releaseLevelDropdown, 1, row, 1);
-  m_Grid.attach(*configVersionLabel, 3, row);
-  m_Grid.attach(*configVersionTextbox, 4, row);
-  m_Grid.attach(*flightModelVersionLabel, 9, row);
-  m_Grid.attach(*flightModelVersionTextbox, 10, row++, 20);
-  
-  m_Grid.attach(*authorLabel, 0, row);
-  m_Grid.attach(*authorTextbox, 1, row, 3);
-  m_Grid.attach(*emailLabel, 4, row, 1);
-  m_Grid.attach(*emailTextbox, 5, row++, 39);
+  m_grid.attach(*releaseLevelLabel, 0, row);
+  m_grid.attach(*releaseLevelDropdown, 1, row, 1);
+  m_grid.attach(*configVersionLabel, 3, row);
+  m_grid.attach(*configVersionTextbox, 4, row);
+  m_grid.attach(*flightModelVersionLabel, 9, row);
+  m_grid.attach(*flightModelVersionTextbox, 10, row++, 20);
 
-  m_Grid.attach(*organizationLabel, 0, row);
-  m_Grid.attach(*organizationFrame, 1, row, 3, 1); // Spans multiple columns for the text area
+  m_grid.attach(*authorLabel, 0, row);
+  m_grid.attach(*authorTextbox, 1, row, 3);
+  m_grid.attach(*emailLabel, 4, row, 1);
+  m_grid.attach(*emailTextbox, 5, row++, 39);
 
-  m_Grid.attach(*descriptionLabel, 4, row);
-  m_Grid.attach(*descriptionFrame, 5, row++, 39, 2);
+  m_grid.attach(*organizationLabel, 0, row);
+  m_grid.attach(*organizationFrame, 1, row, 3, 1); // Spans multiple columns for the text area
 
-  m_Grid.attach(*fileDateLabel, 0, row);
-  m_Grid.attach(*fileDateTextbox, 1, row, 3);
+  m_grid.attach(*descriptionLabel, 4, row);
+  m_grid.attach(*descriptionFrame, 5, row++, 39, 2);
+
+  m_grid.attach(*fileDateLabel, 0, row);
+  m_grid.attach(*fileDateTextbox, 1, row, 3);
 
   auto spacer = Gtk::make_managed<Gtk::Label>();
-  spacer->set_size_request(-1, 10);  // Set height to 10 pixels
-  m_Grid.attach(*spacer, 0, row++);
+  spacer->set_size_request(-1, 10); // Set height to 10 pixels
+  m_grid.attach(*spacer, 0, row++);
 
   //////////////
 
@@ -285,27 +281,27 @@ void GeneralInformationSubsystem::Create()
   // m_Grid.attach(*referencesFrame, 1, row++, 43, 2);
 
   // Attach to grid
-  m_Grid.attach(*referencesLabel, 0, row);
-  m_Grid.attach(*referencesFrame, 1, row++, 43, 2);
-  m_Grid.attach(*spacer, 0, row++);
+  m_grid.attach(*referencesLabel, 0, row);
+  m_grid.attach(*referencesFrame, 1, row++, 43, 2);
+  m_grid.attach(*spacer, 0, row++);
 
   /////////////
 
-  m_Grid.attach(*limitationsLabel, 0, row);
-  m_Grid.attach(*limitationsFrame, 1, row++, 43, 2);
-  m_Grid.attach(*spacer, 0, row++);
+  m_grid.attach(*limitationsLabel, 0, row);
+  m_grid.attach(*limitationsFrame, 1, row++, 43, 2);
+  m_grid.attach(*spacer, 0, row++);
 
-  m_Grid.attach(*notesLabel, 0, row);
-  m_Grid.attach(*notesFrame, 1, row++, 43, 2);
-  m_Grid.attach(*spacer, 0, row++);
-
+  m_grid.attach(*notesLabel, 0, row);
+  m_grid.attach(*notesFrame, 1, row++, 43, 2);
+  m_grid.attach(*spacer, 0, row++);
 }
 
-
-void GeneralInformationSubsystem::LoadFromXML(const std::string& filePath) {
+void GeneralInformationSubsystem::LoadFromXML(const std::string &filePath)
+{
   JSBEdit::XMLLoad xmlLoader;
 
-  try {
+  try
+  {
     auto xmlDoc = xmlLoader.Load(filePath);
 
     Aircraft aircraft;
@@ -328,7 +324,7 @@ void GeneralInformationSubsystem::LoadFromXML(const std::string& filePath) {
       aircraft.setNotes(node.GetText());
     if (auto node = xmlDoc.GetNode("/GeneralInfo/Description"))
       aircraft.setDescription(node.GetText());
-    
+
     // Populate GUI
     m_AircraftNameEntry.set_text(aircraft.getName());
     m_AuthorEntry.set_text(user.getAuthorName());
@@ -340,7 +336,8 @@ void GeneralInformationSubsystem::LoadFromXML(const std::string& filePath) {
 
     // Populate Release Level dropdown
     auto fdmNode = xmlDoc.GetNode("fdm_config");
-    if (fdmNode) {
+    if (fdmNode)
+    {
       // Extract release level
       std::string release = fdmNode.GetAttribute("release").second;
       if (release == "ALPHA")
@@ -351,25 +348,33 @@ void GeneralInformationSubsystem::LoadFromXML(const std::string& filePath) {
         std::cerr << "Unknown release level: " << release << std::endl;
       // Extract and set file path from XML
       auto filePathAttr = fdmNode.GetAttribute("filePath");
-      if (!filePathAttr.first.empty()) {
-        //std::cout << "File path found in XML: " << filePathAttr.second << std::endl;
+      if (!filePathAttr.first.empty())
+      {
+        // std::cout << "File path found in XML: " << filePathAttr.second << std::endl;
         SetFilePath(filePathAttr.second); // Update m_FilePath and GUI
-      } else {
+      }
+      else
+      {
         std::cerr << "No file path attribute found in XML!" << std::endl;
         SetFilePath(filePath); // Use the argument as fallback
       }
-      } else {
-        std::cerr << "fdm_config node not found in XML!" << std::endl;
-        SetFilePath(filePath); // Use the argument as fallback
-      }
-  } catch (const std::exception& e) {
+    }
+    else
+    {
+      std::cerr << "fdm_config node not found in XML!" << std::endl;
+      SetFilePath(filePath); // Use the argument as fallback
+    }
+  }
+  catch (const std::exception &e)
+  {
     std::cerr << "Error loading XML: " << e.what() << std::endl;
   }
 }
 
-void GeneralInformationSubsystem::SaveToXML(const std::string& filePath, const Aircraft& aircraft, const User& user, const Config& config) {
-  JSBEdit::XMLDoc xmlDoc;                // Create a new XMLDoc instance
-  JSBEdit::XMLWriter xmlWriter(xmlDoc);  // Pass xmlDoc to XMLWriter
+void GeneralInformationSubsystem::SaveToXML(const std::string &filePath, const Aircraft &aircraft, const User &user, const Config &config)
+{
+  JSBEdit::XMLDoc xmlDoc;               // Create a new XMLDoc instance
+  JSBEdit::XMLWriter xmlWriter(xmlDoc); // Pass xmlDoc to XMLWriter
 
   xmlDoc.GetNode("/GeneralInfo/AircraftName").SetText(aircraft.getName());
   xmlDoc.GetNode("/GeneralInfo/Author").SetText(user.getAuthorName());
@@ -380,9 +385,10 @@ void GeneralInformationSubsystem::SaveToXML(const std::string& filePath, const A
   xmlDoc.GetNode("/GeneralInfo/Description").SetText(aircraft.getDescription());
 
   auto fdmNode = xmlDoc.GetNode("fdm_config");
-  if (fdmNode) {
+  if (fdmNode)
+  {
     // Create an AttributeKV object for the release attribute
-    AttributeKV releaseAttr;  
+    AttributeKV releaseAttr;
     int activeIndex = m_ReleaseLevelDropdown->get_active_row_number();
 
     if (activeIndex == 0)
@@ -397,21 +403,25 @@ void GeneralInformationSubsystem::SaveToXML(const std::string& filePath, const A
 }
 
 // Method to set file path from the GUI
-void GeneralInformationSubsystem::SetFilePath(const std::string& filePath) {
-  //std::cout << "Setting file path: " << filePath << std::endl;
-    if (filePath.empty()) {
-        std::cerr << "Warning: File path is empty!" << std::endl;
-    }
-    m_FilePath = filePath;
-    m_filePathTextbox.set_text(filePath);
+void GeneralInformationSubsystem::SetFilePath(const std::string &filePath)
+{
+  // std::cout << "Setting file path: " << filePath << std::endl;
+  if (filePath.empty())
+  {
+    std::cerr << "Warning: File path is empty!" << std::endl;
+  }
+  m_FilePath = filePath;
+  m_filePathTextbox.set_text(filePath);
 }
 
-void GeneralInformationSubsystem::UpdateDataFromGUI(Aircraft& aircraft, User& user, Config& config) {
+void GeneralInformationSubsystem::UpdateDataFromGUI(Aircraft &aircraft, User &user, Config &config)
+{
   // Validate input
   std::string newFilePath = m_filePathTextbox.get_text();
-  if (newFilePath.empty()) {
-      std::cerr << "Error: File path cannot be empty!" << std::endl;
-      return;
+  if (newFilePath.empty())
+  {
+    std::cerr << "Error: File path cannot be empty!" << std::endl;
+    return;
   }
 
   // Update data
@@ -425,24 +435,29 @@ void GeneralInformationSubsystem::UpdateDataFromGUI(Aircraft& aircraft, User& us
   SetFilePath(newFilePath);
 }
 
-void GeneralInformationSubsystem::ValidateAndSave() {
+void GeneralInformationSubsystem::ValidateAndSave()
+{
   std::string newFilePath = m_filePathTextbox.get_text();
-  if (newFilePath.empty()) {
+  if (newFilePath.empty())
+  {
     std::cerr << "Error: File path is empty! Please provide a valid path." << std::endl;
     return;
   }
 
-  if (!Validation::validateAuthor(m_AuthorEntry.get_text())) {
+  if (!Validation::validateAuthor(m_AuthorEntry.get_text()))
+  {
     std::cerr << "Invalid author name. Please ensure the name field is correctly filled." << std::endl;
     return;
   }
 
-  if (!Validation::validateEmail(m_EmailEntry.get_text())) {
+  if (!Validation::validateEmail(m_EmailEntry.get_text()))
+  {
     std::cerr << "Invalid email format. Please enter a valid email address." << std::endl;
     return;
   }
 
-  if(!Validation::validateNotes(m_Notes.get_buffer()->get_text())) {
+  if (!Validation::validateNotes(m_Notes.get_buffer()->get_text()))
+  {
     std::cerr << "Invalid, notes must be less than 500 characters." << std::endl;
     return;
   }
