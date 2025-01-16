@@ -6,7 +6,7 @@ namespace JSBEdit
     ExampleWindow::ExampleWindow(const Glib::RefPtr<Gtk::Application> &app)
         : m_Box(Gtk::Orientation::VERTICAL), m_appPointer{app},
           m_refRecentManager(Gtk::RecentManager::get_default()),
-          m_tab1(app, "HI TAB1"), m_tab2(app, "TAB2"), m_fcDemo(app, "flight_control")
+          m_tab1(app, "HI TAB1"), m_tab2(app, "TAB2")
     {
         set_title("JSBSim Commander");
         set_default_size(800, 600);
@@ -146,6 +146,7 @@ namespace JSBEdit
         m_Subsystems.push_back(new MassBalanceSubsystem(m_appPointer));
         m_Subsystems.push_back(new ExternalReactionsSubsystem(m_appPointer));
         m_Subsystems.push_back(new GroundReactionsSubsystem(m_appPointer));
+        m_Subsystems.push_back(new DragDrop::FlightControlDemo(m_appPointer));
 
         // Call Create() for all subsystems
         for (const auto &i : m_Subsystems)
@@ -153,10 +154,6 @@ namespace JSBEdit
             i->Create();
             m_Notebook->append_page(i->GetBox(), i->GetName());
         }
-
-        // this subsystem is special
-        m_Notebook->append_page(m_fcDemo, "Flight Control");
-        m_fcDemo.LoadXMLData();
 
         std::cout << "Loaded XML data from: " << xmlptr()->GetFilePath() << std::endl;
 

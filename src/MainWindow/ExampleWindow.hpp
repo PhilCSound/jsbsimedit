@@ -44,7 +44,6 @@ namespace JSBEdit
 		Gtk::StackSwitcher m_stackSwitcher{};
 		ExampleTab m_tab1;
 		ExampleTab m_tab2;
-		DragDrop::FlightControlDemo m_fcDemo;
 
 		Glib::RefPtr<Gtk::Builder> m_refBuilder;
 		Glib::RefPtr<Gio::SimpleActionGroup> m_refActionGroup;
