@@ -1,12 +1,8 @@
-#include <iostream>
 #include "MetricsSubsystem.hpp"
-#include "XML/XMLDoc.hpp"
-#include "XML/XMLNode.hpp"
-#include <gtkmm.h>
 
-MetricsSubsystem::MetricsSubsystem()
+MetricsSubsystem::MetricsSubsystem(std::shared_ptr<Gtk::Application> &app)
+    : Subsystem{"Metrics", app}
 {
-  m_Name = "Metrics";
   std::map<std::string, Metrics::string_vector> unit_map{
       {"wingarea", {"FT2", "M2"}},
       {"wingspan", {"FT", "M"}},
@@ -58,8 +54,8 @@ MetricsSubsystem::MetricsSubsystem()
 
 void MetricsSubsystem::Create()
 {
-  m_Grid.set_row_spacing(10);
-  m_Grid.set_column_spacing(10);
+  m_grid.set_row_spacing(10);
+  m_grid.set_column_spacing(10);
 
   // Add widgets for data units
   int row = 0;
@@ -167,12 +163,12 @@ void MetricsSubsystem::load_data(JSBEdit::XMLDoc *doc_ptr)
       Gtk::DropDown *unit_dropdown{nullptr};
       for (int i = 0; i < LABELS; i++)
       {
-        auto it = m_Grid.get_child_at(0, i);
+        auto it = m_grid.get_child_at(0, i);
         auto *label = dynamic_cast<Gtk::Label *>(it);
         if (label->get_text().raw() == cit->first)
         {
-          value_box = dynamic_cast<Gtk::Entry *>(m_Grid.get_child_at(1, i));
-          unit_dropdown = dynamic_cast<Gtk::DropDown *>(m_Grid.get_child_at(3, i));
+          value_box = dynamic_cast<Gtk::Entry *>(m_grid.get_child_at(1, i));
+          unit_dropdown = dynamic_cast<Gtk::DropDown *>(m_grid.get_child_at(3, i));
           break;
         }
       }
@@ -220,14 +216,14 @@ void MetricsSubsystem::load_data(JSBEdit::XMLDoc *doc_ptr)
       Gtk::DropDown *unit_dropdown{nullptr};
       for (int i = 9; i <= 13; i += 2)
       {
-        auto it = m_Grid.get_child_at(0, i);
+        auto it = m_grid.get_child_at(0, i);
         auto *label = dynamic_cast<Gtk::Label *>(it);
         if (label->get_text().raw() == name)
         {
-          x_box = dynamic_cast<Gtk::Entry *>(m_Grid.get_child_at(1, i + 1));
-          y_box = dynamic_cast<Gtk::Entry *>(m_Grid.get_child_at(3, i + 1));
-          z_box = dynamic_cast<Gtk::Entry *>(m_Grid.get_child_at(5, i + 1));
-          unit_dropdown = dynamic_cast<Gtk::DropDown *>(m_Grid.get_child_at(7, i + 1));
+          x_box = dynamic_cast<Gtk::Entry *>(m_grid.get_child_at(1, i + 1));
+          y_box = dynamic_cast<Gtk::Entry *>(m_grid.get_child_at(3, i + 1));
+          z_box = dynamic_cast<Gtk::Entry *>(m_grid.get_child_at(5, i + 1));
+          unit_dropdown = dynamic_cast<Gtk::DropDown *>(m_grid.get_child_at(7, i + 1));
           break;
         }
       }
@@ -250,7 +246,7 @@ void MetricsSubsystem::load_data(JSBEdit::XMLDoc *doc_ptr)
 void MetricsSubsystem::add_vertex_data_unit(std::string tab_name, Metrics::string_vector units, int vertical_position, int horizontal_position)
 {
   auto section_label = Gtk::make_managed<Gtk::Label>(tab_name);
-  m_Grid.attach(*section_label, horizontal_position, vertical_position++, 6, 1);
+  m_grid.attach(*section_label, horizontal_position, vertical_position++, 6, 1);
 
   std::vector<Gtk::Label *> coordinate_labels{};
   std::vector<Gtk::Entry *> entry_boxes{};
@@ -264,8 +260,8 @@ void MetricsSubsystem::add_vertex_data_unit(std::string tab_name, Metrics::strin
     entry_boxes.back()->set_input_purpose(Gtk::InputPurpose::NUMBER);
     entry_boxes.back()->set_max_length(15);
 
-    m_Grid.attach(*coordinate_labels.back(), horizontal_position++, vertical_position, 1, 1);
-    m_Grid.attach(*entry_boxes.back(), horizontal_position++, vertical_position, 1, 1);
+    m_grid.attach(*coordinate_labels.back(), horizontal_position++, vertical_position, 1, 1);
+    m_grid.attach(*entry_boxes.back(), horizontal_position++, vertical_position, 1, 1);
   }
 
   // Linking to X
@@ -294,7 +290,7 @@ void MetricsSubsystem::add_vertex_data_unit(std::string tab_name, Metrics::strin
 
   // Add the unit dropdown
   auto unit_label = Gtk::make_managed<Gtk::Label>("Unit: ");
-  m_Grid.attach(*unit_label, horizontal_position++, vertical_position, 1, 1);
+  m_grid.attach(*unit_label, horizontal_position++, vertical_position, 1, 1);
 
   auto dropdown_bank = Gtk::StringList::create({});
   for (auto cit = units.cbegin(); cit != units.cend(); cit++)
@@ -305,7 +301,7 @@ void MetricsSubsystem::add_vertex_data_unit(std::string tab_name, Metrics::strin
   auto drop_down = Gtk::make_managed<Gtk::DropDown>();
   drop_down->set_model(dropdown_bank);
   drop_down->set_show_arrow(true);
-  m_Grid.attach(*drop_down, horizontal_position++, vertical_position, 1, 1);
+  m_grid.attach(*drop_down, horizontal_position++, vertical_position, 1, 1);
 
   // Connect dropdown signal to a handler
   drop_down->property_selected().signal_changed().connect(
@@ -324,7 +320,7 @@ void MetricsSubsystem::add_data_unit(std::string tab_name, Metrics::string_vecto
 {
   auto entry_label = Gtk::make_managed<Gtk::Label>(tab_name);
 
-  m_Grid.attach(*entry_label, horozontal_position++, vertical_position);
+  m_grid.attach(*entry_label, horozontal_position++, vertical_position);
 
   auto entry_number = Gtk::make_managed<Gtk::Entry>();
   entry_number->set_expand(false);
@@ -336,11 +332,11 @@ void MetricsSubsystem::add_data_unit(std::string tab_name, Metrics::string_vecto
     data_units[tab_name]->set_value(update_text(entry_number->get_text()));
     entry_number->set_text(std::to_string(data_units[tab_name]->get_value())); });
 
-  m_Grid.attach(*entry_number, horozontal_position++, vertical_position);
+  m_grid.attach(*entry_number, horozontal_position++, vertical_position);
 
   auto unit_label = Gtk::make_managed<Gtk::Label>("Unit: ");
 
-  m_Grid.attach(*unit_label, horozontal_position++, vertical_position);
+  m_grid.attach(*unit_label, horozontal_position++, vertical_position);
 
   auto dropdown_bank = Gtk::StringList::create({});
 
@@ -356,7 +352,7 @@ void MetricsSubsystem::add_data_unit(std::string tab_name, Metrics::string_vecto
   // drop_down->set_expand(false);
   drop_down->set_show_arrow(true);
 
-  m_Grid.attach(*drop_down, horozontal_position++, vertical_position);
+  m_grid.attach(*drop_down, horozontal_position++, vertical_position);
 
   // Connect dropdown signal to a handler
   drop_down->property_selected().signal_changed().connect(
