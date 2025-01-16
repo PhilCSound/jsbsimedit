@@ -6,6 +6,7 @@
 class Subsystem
 {
 public:
+
   /// @brief Constructor, used to create a subsystem.
   /// @param app - Used for subsystem to call.
   /// @param name - Name of the subsystem.
@@ -21,7 +22,17 @@ public:
   /// Called before adding the subsystem to the Subsystem group.
   virtual void Create() = 0;
 
+  /// @brief Returns the name of the subsystem.
+  [[nodiscard]]
+  std::string GetName() const;
+
 protected:
+
+  /////////////////////////////////////////////////////////////////////////////////
+  ///       Member Variables
+  /////////////////////////////////////////////////////////////////////////////////
+
+
   /// @brief Used by some subsystems to create modal popup windows.
   std::shared_ptr<Gtk::Application> m_app;
 

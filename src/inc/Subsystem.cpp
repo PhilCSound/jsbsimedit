@@ -5,3 +5,8 @@ Subsystem::Subsystem(const std::string &name, const std::shared_ptr<Gtk::Applica
 {
     m_boxLayout.append(m_grid);
 }
+
+std::string Subsystem::GetName() const
+{
+    return m_name;
+}
