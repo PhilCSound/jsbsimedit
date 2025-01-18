@@ -1,8 +1,6 @@
 #pragma once
 
 #include "gtkmm.h"
-#include "ExampleTab.hpp"
-#include "Systems/FlightControlSubsystem.hpp"
 #include <iostream>
 
 #include "inc/XML_api.hpp"
@@ -17,15 +15,16 @@
 #include "ExternalReactions/ExternalReactionsSubsystem.hpp"
 #include "GeneralInformation/GeneralInformationSubsystem.hpp"
 #include "GroundReactions/GroundReactionsSubsystem.hpp"
+#include "Systems/FlightControlSubsystem.hpp"
 
 namespace JSBEdit
 {
 
-	class ExampleWindow : public Gtk::Window
+	class MainWindow : public Gtk::Window
 	{
 	public:
-		ExampleWindow(const Glib::RefPtr<Gtk::Application> &app);
-		~ExampleWindow() = default;
+		MainWindow(const Glib::RefPtr<Gtk::Application> &app);
+		~MainWindow() = default;
 
 	protected:
 		// Signal handlers:
@@ -42,8 +41,6 @@ namespace JSBEdit
 		Gtk::Box m_Box;
 		Gtk::Stack m_stack{};
 		Gtk::StackSwitcher m_stackSwitcher{};
-		ExampleTab m_tab1;
-		ExampleTab m_tab2;
 
 		Glib::RefPtr<Gtk::Builder> m_refBuilder;
 		Glib::RefPtr<Gio::SimpleActionGroup> m_refActionGroup;

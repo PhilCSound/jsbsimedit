@@ -1,6 +1,7 @@
 #pragma once
 
-#include <gtkmm/application.h>
+#include "gtkmm/application.h"
+#include "MainWindow/MainWindow.hpp"
 
 namespace JSBEdit
 {
@@ -13,7 +14,7 @@ namespace JSBEdit
 
     public:
         Application();
-        int Run(int argc,char* argv[]);
+        int Run(int argc, char *argv[]);
         int Stop();
         Glib::ustring GetApplicationPath();
     };

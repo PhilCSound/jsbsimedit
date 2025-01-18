@@ -1,12 +1,11 @@
-#include "ExampleWindow.hpp"
+#include "MainWindow/MainWindow.hpp"
 
 namespace JSBEdit
 {
 
-    ExampleWindow::ExampleWindow(const Glib::RefPtr<Gtk::Application> &app)
+    MainWindow::MainWindow(const Glib::RefPtr<Gtk::Application> &app)
         : m_Box(Gtk::Orientation::VERTICAL), m_appPointer{app},
-          m_refRecentManager(Gtk::RecentManager::get_default()),
-          m_tab1(app, "HI TAB1"), m_tab2(app, "TAB2")
+          m_refRecentManager(Gtk::RecentManager::get_default())
     {
         set_title("JSBSim Commander");
         set_default_size(800, 600);
@@ -18,17 +17,17 @@ namespace JSBEdit
 
         // File menu:
         m_refActionGroup->add_action("new",
-                                     sigc::mem_fun(*this, &ExampleWindow::on_menu_file_new));
+                                     sigc::mem_fun(*this, &MainWindow::on_menu_file_new));
 
         m_refActionGroup->add_action("save",
-                                     sigc::mem_fun(*this, &ExampleWindow::on_menu_file_save)); // save
+                                     sigc::mem_fun(*this, &MainWindow::on_menu_file_save)); // save
 
         // A menu item to open the file dialog:
         m_refActionGroup->add_action("files-dialog",
-                                     sigc::mem_fun(*this, &ExampleWindow::on_menu_file_files_dialog));
+                                     sigc::mem_fun(*this, &MainWindow::on_menu_file_files_dialog));
 
         m_refActionGroup->add_action("quit",
-                                     sigc::mem_fun(*this, &ExampleWindow::on_menu_file_quit));
+                                     sigc::mem_fun(*this, &MainWindow::on_menu_file_quit));
 
         insert_action_group("example", m_refActionGroup);
 
@@ -63,17 +62,17 @@ namespace JSBEdit
         m_Box.append(*m_Notebook);
     }
 
-    void ExampleWindow::on_menu_file_new()
+    void MainWindow::on_menu_file_new()
     {
         if (!m_refFileDialog)
         {
             m_refFileDialog = Gtk::FileDialog::create();
             m_refFileDialog->set_modal(true);
         }
-        m_refFileDialog->open(*this, sigc::mem_fun(*this, &ExampleWindow::on_dialog_finish));
+        m_refFileDialog->open(*this, sigc::mem_fun(*this, &MainWindow::on_dialog_finish));
     }
 
-    void ExampleWindow::on_menu_file_save() // implement save function to over-write the xml
+    void MainWindow::on_menu_file_save() // implement save function to over-write the xml
     {
         std::filesystem::path filePath = xmlptr()->GetFilePath();
         if (xmlptr()->SaveToFile(filePath))
@@ -86,7 +85,7 @@ namespace JSBEdit
         }
     }
 
-    void ExampleWindow::on_menu_file_files_dialog()
+    void MainWindow::on_menu_file_files_dialog()
     {
         if (!m_refFileDialog)
         {
@@ -94,15 +93,15 @@ namespace JSBEdit
             m_refFileDialog->set_modal(true);
             m_refFileDialog->set_title("Open XML File");
         }
-        m_refFileDialog->open(*this, sigc::mem_fun(*this, &ExampleWindow::on_dialog_finish));
+        m_refFileDialog->open(*this, sigc::mem_fun(*this, &MainWindow::on_dialog_finish));
     }
 
-    void ExampleWindow::on_menu_file_quit()
+    void MainWindow::on_menu_file_quit()
     {
         set_visible(false); // Closes the main window to stop the app->make_window_and_run().
     }
 
-    void ExampleWindow::on_dialog_finish(Glib::RefPtr<Gio::AsyncResult> &result)
+    void MainWindow::on_dialog_finish(Glib::RefPtr<Gio::AsyncResult> &result)
     {
         Glib::RefPtr<Gio::File> file;
         try
@@ -159,7 +158,7 @@ namespace JSBEdit
 
         // metric_ptr->load_data(xmlptr());
     }
-    void ExampleWindow::on_notebook_switch_page(Gtk::Widget * /* page */, guint page_num)
+    void MainWindow::on_notebook_switch_page(Gtk::Widget * /* page */, guint page_num)
     {
         std::cout << "Switched to tab with index " << page_num << std::endl;
 
