@@ -146,7 +146,7 @@ namespace JSBEdit
         m_Subsystems.push_back(new MassBalanceSubsystem(m_appPointer));
         m_Subsystems.push_back(new ExternalReactionsSubsystem(m_appPointer));
         m_Subsystems.push_back(new GroundReactionsSubsystem(m_appPointer));
-        m_Subsystems.push_back(new DragDrop::FlightControlDemo(m_appPointer));
+        m_Subsystems.push_back(new DragDrop::FlightControlSubsystem(m_appPointer));
 
         // Call Create() for all subsystems
         for (const auto &i : m_Subsystems)

@@ -1,14 +1,14 @@
-#include "FlightControlDemo.hpp"
+#include "Systems/FlightControlSubsystem.hpp"
 
 namespace DragDrop
 {
 
-    FlightControlDemo::FlightControlDemo(std::shared_ptr<Gtk::Application> &app)
+    FlightControlSubsystem::FlightControlSubsystem(std::shared_ptr<Gtk::Application> &app)
         : m_systemName("flight_control"), Subsystem{"Flight Control", app}, m_canvas(app, "flight_control")
     {
     }
 
-    void FlightControlDemo::Create()
+    void FlightControlSubsystem::Create()
     {
         m_boxLayout.set_orientation(Gtk::Orientation::VERTICAL);
         try
@@ -60,18 +60,18 @@ namespace DragDrop
         m_notebook.set_hexpand(true);
         m_notebook.set_show_border(false);
         // signal handler for changing channel tabs
-        m_notebook.signal_switch_page().connect(sigc::mem_fun(*this, &FlightControlDemo::on_notebook_switch_page));
+        m_notebook.signal_switch_page().connect(sigc::mem_fun(*this, &FlightControlSubsystem::on_notebook_switch_page));
         LoadXMLData();
     }
 
-    void FlightControlDemo::CreateNewTab(const std::string &name)
+    void FlightControlSubsystem::CreateNewTab(const std::string &name)
     {
         Gtk::Box emptyBox{};
         m_notebook.append_page(emptyBox, name);
         m_notebook.show();
     }
 
-    void FlightControlDemo::LoadXMLData()
+    void FlightControlSubsystem::LoadXMLData()
     {
         auto node = xmlptr()->GetNode("fdm_config").FindChild(m_systemName);
         if (!node)
@@ -100,7 +100,7 @@ namespace DragDrop
         }
     }
 
-    Glib::RefPtr<Gdk::ContentProvider> FlightControlDemo::SetDragData(int _data)
+    Glib::RefPtr<Gdk::ContentProvider> FlightControlSubsystem::SetDragData(int _data)
     {
         Glib::Value<int> data;
         data.init(data.value_type());
@@ -108,7 +108,7 @@ namespace DragDrop
         return Gdk::ContentProvider::create(data);
     }
 
-    void FlightControlDemo::on_notebook_switch_page(Gtk::Widget *wid, guint page_num)
+    void FlightControlSubsystem::on_notebook_switch_page(Gtk::Widget *wid, guint page_num)
     {
         // not gonna lie i copied the function prototype above from the examplewindow.cpp
         auto nameClicked = m_notebook.get_tab_label_text(*wid);

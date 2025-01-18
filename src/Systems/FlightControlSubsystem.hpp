@@ -1,6 +1,5 @@
 #pragma once
 
-#include <gtkmm.h>
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -12,11 +11,11 @@
 namespace DragDrop
 {
 
-	class FlightControlDemo : public Subsystem
+	class FlightControlSubsystem : public Subsystem
 	{
 	public:
-		FlightControlDemo(std::shared_ptr<Gtk::Application> &app);
-		~FlightControlDemo() = default;
+		FlightControlSubsystem(std::shared_ptr<Gtk::Application> &app);
+		~FlightControlSubsystem() = default;
 
 		void Create() override;
 		void CreateNewTab(const std::string &name);
