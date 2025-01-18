@@ -1,22 +1,17 @@
-#include <iostream>
 #include "IOSubSystem.hpp"
-#include "MainWindow.hpp"
-#include <gtkmm.h>
 
-
-IOSubSystem::IOSubSystem()
+IOSubSystem::IOSubSystem(std::shared_ptr<Gtk::Application> &app)
+    : Subsystem{"InputOutput", app}
 {
-  m_Name = "InputOutput";
-  //std::cout << "In IOSubsystem contructor" << std::endl; 
 }
 
 void IOSubSystem::Create()
 {
-  //std::cout << "\nin IOSubsystem::Create\n" << std::endl;
+  // std::cout << "\nin IOSubsystem::Create\n" << std::endl;
 
-  m_Grid.set_row_spacing(15);
-  m_Grid.set_column_spacing(20);
-    
+  m_grid.set_row_spacing(15);
+  m_grid.set_column_spacing(20);
+
   // call MainWindow constructor
-  MainWindow mainWindow(m_Grid);
+  MainWindow mainWindow(m_grid);
 }

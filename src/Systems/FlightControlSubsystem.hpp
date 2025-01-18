@@ -1,36 +1,36 @@
 #pragma once
 
-#include <gtkmm.h>
 #include <string>
 #include <vector>
 #include <unordered_map>
 #include <iostream>
 #include "Systems/ChannelCanvas.hpp"
 #include "inc/XML_api.hpp"
+#include "inc/Subsystem.hpp"
 
 namespace DragDrop
 {
 
-	class FlightControlDemo : public Gtk::Box
+	class FlightControlSubsystem : public Subsystem
 	{
 	public:
-		FlightControlDemo(const Glib::RefPtr<Gtk::Application> &app, const std::string& systemName);
-		~FlightControlDemo() = default;
+		FlightControlSubsystem(std::shared_ptr<Gtk::Application> &app);
+		~FlightControlSubsystem() = default;
 
-        void CreateNewTab(const std::string& name);
+		void Create() override;
+		void CreateNewTab(const std::string &name);
 		void LoadXMLData();
 
 	private:
 		// Signal handlers
 		Glib::RefPtr<Gdk::ContentProvider> SetDragData(int data);
-		void on_notebook_switch_page(Gtk::Widget* wid, guint page_num);
+		void on_notebook_switch_page(Gtk::Widget *wid, guint page_num);
 
-		//Member vars
+		// Member vars
 		ChannelCanvas m_canvas;
 		Glib::RefPtr<Gtk::Builder> m_refBuilder;
-		std::string m_systemName;
+		std::string m_systemName{};
 		Gtk::Notebook m_notebook;
-
 	};
 
 };

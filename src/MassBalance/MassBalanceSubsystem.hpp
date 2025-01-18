@@ -5,10 +5,16 @@
 #include "Pointmass.hpp"
 #include "gtkmm.h"
 #include "inc/Subsystem.hpp"
+#include "PointMassDialogue.hpp"
+#include "inc/XML_api.hpp"
+#include <assert.h>
+#include <iostream>
+#include <vector>
 
-class MassBalanceSubsystem : public Subsystem {
+class MassBalanceSubsystem : public Subsystem
+{
 public:
-  MassBalanceSubsystem();
+  MassBalanceSubsystem(std::shared_ptr<Gtk::Application> &app);
   void Create();
   void on_button_pressed();
 

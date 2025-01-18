@@ -4,7 +4,8 @@
 #include "EngineThrusterDialog.hpp"
 #include "PropulsionSubsystem.hpp"
 
-EngineThrusterDialog::EngineThrusterDialog(const std::string& engine, const std::string& thruster) {
+EngineThrusterDialog::EngineThrusterDialog(const std::string &engine, const std::string &thruster)
+{
     // TODO: If existing pair make sure changes are included in dialog box
 
     // Set the title and default size for the parent window
@@ -16,40 +17,42 @@ EngineThrusterDialog::EngineThrusterDialog(const std::string& engine, const std:
     dialogEng->set_modal(true);
 
     // Use GTK_RESPONSE_ACCEPT for OK and GTK_RESPONSE_REJECT for Cancel
-    dialogEng->add_button("OK", GTK_RESPONSE_ACCEPT);  // OK button
-    dialogEng->add_button("Cancel", GTK_RESPONSE_REJECT);  // Cancel button
+    dialogEng->add_button("OK", GTK_RESPONSE_ACCEPT);     // OK button
+    dialogEng->add_button("Cancel", GTK_RESPONSE_REJECT); // Cancel button
 
     // Create a Gtk::Box to hold the grid (as the content area)
-    Gtk::Box* content_area = dynamic_cast<Gtk::Box*>(dialogEng->get_content_area());
-    if (content_area) {
+    Gtk::Box *content_area = dynamic_cast<Gtk::Box *>(dialogEng->get_content_area());
+    if (content_area)
+    {
         // Add the grid to the content area using pack_start
-        content_area->append(grid);  // In GTKmm 4, append() is used instead of pack_start
+        content_area->append(grid); // In GTKmm 4, append() is used instead of pack_start
     }
-    else {
+    else
+    {
         std::cerr << "Error: Content area is not a Gtk::Box!" << std::endl;
     }
 
     // Engine Section
-    Gtk::Label* engine_header = new Gtk::Label("Engine");
+    Gtk::Label *engine_header = new Gtk::Label("Engine");
     grid.attach(*engine_header, 0, 0, 2, 1);
 
     // Engine Name Field
-    // TODO: Change name to selected engine name from dropdown 
-    Gtk::Label* engine_name_label = new Gtk::Label("Engine Name:");
-    Gtk::Label* engine_name_out = new Gtk::Label(engine);
+    // TODO: Change name to selected engine name from dropdown
+    Gtk::Label *engine_name_label = new Gtk::Label("Engine Name:");
+    Gtk::Label *engine_name_out = new Gtk::Label(engine);
     grid.attach(*engine_name_label, 0, 1, 1, 1);
     grid.attach(*engine_name_out, 1, 1, 1, 1);
 
     // Location Subheader
-    Gtk::Label* location_header = new Gtk::Label("Location");
+    Gtk::Label *location_header = new Gtk::Label("Location");
     grid.attach(*location_header, 0, 2, 2, 1);
 
     // X, Y, Z fields for location
-    Gtk::Label* x_label = new Gtk::Label("x =");
+    Gtk::Label *x_label = new Gtk::Label("x =");
     x_entry = new Gtk::Entry();
-    Gtk::Label* y_label = new Gtk::Label("y =");
+    Gtk::Label *y_label = new Gtk::Label("y =");
     y_entry = new Gtk::Entry();
-    Gtk::Label* z_label = new Gtk::Label("z =");
+    Gtk::Label *z_label = new Gtk::Label("z =");
     z_entry = new Gtk::Entry();
 
     grid.attach(*x_label, 0, 3, 1, 1);
@@ -67,15 +70,15 @@ EngineThrusterDialog::EngineThrusterDialog(const std::string& engine, const std:
     grid.attach(*location_dropdown, 1, 6, 1, 1);
 
     // Orientation Subheader
-    Gtk::Label* orient_header = new Gtk::Label("Orient");
+    Gtk::Label *orient_header = new Gtk::Label("Orient");
     grid.attach(*orient_header, 0, 7, 2, 1);
 
     // Roll, Pitch, Yaw fields
-    Gtk::Label* roll_label = new Gtk::Label("roll =");
+    Gtk::Label *roll_label = new Gtk::Label("roll =");
     roll_entry = new Gtk::Entry();
-    Gtk::Label* pitch_label = new Gtk::Label("pitch =");
+    Gtk::Label *pitch_label = new Gtk::Label("pitch =");
     pitch_entry = new Gtk::Entry();
-    Gtk::Label* yaw_label = new Gtk::Label("yaw =");
+    Gtk::Label *yaw_label = new Gtk::Label("yaw =");
     yaw_entry = new Gtk::Entry();
 
     grid.attach(*roll_label, 0, 8, 1, 1);
@@ -92,34 +95,34 @@ EngineThrusterDialog::EngineThrusterDialog(const std::string& engine, const std:
     grid.attach(*orient_dropdown, 1, 11, 1, 1);
 
     // Feed Section
-    Gtk::Label* feed_header = new Gtk::Label("Feed");
+    Gtk::Label *feed_header = new Gtk::Label("Feed");
     grid.attach(*feed_header, 0, 12, 2, 1);
 
     // Feed Display (empty for now)
-    Gtk::Entry* feed_display = new Gtk::Entry();
+    Gtk::Entry *feed_display = new Gtk::Entry();
     grid.attach(*feed_display, 1, 13, 1, 1);
 
     // Thruster Section
-    // TODO: Change name to selected thruster name from dropdown 
-    Gtk::Label* thruster_header = new Gtk::Label("Thruster");
+    // TODO: Change name to selected thruster name from dropdown
+    Gtk::Label *thruster_header = new Gtk::Label("Thruster");
     grid.attach(*thruster_header, 0, 14, 2, 1);
 
     // Thruster Name Field
-    Gtk::Label* thruster_name_label = new Gtk::Label("Thruster Name:");
-    Gtk::Label* thruster_name_out = new Gtk::Label(thruster);
+    Gtk::Label *thruster_name_label = new Gtk::Label("Thruster Name:");
+    Gtk::Label *thruster_name_out = new Gtk::Label(thruster);
     grid.attach(*thruster_name_label, 0, 15, 1, 1);
     grid.attach(*thruster_name_out, 1, 15, 1, 1);
 
     // Thruster Location Subheader
-    Gtk::Label* thruster_location_header = new Gtk::Label("Location");
+    Gtk::Label *thruster_location_header = new Gtk::Label("Location");
     grid.attach(*thruster_location_header, 0, 16, 2, 1);
 
     // X, Y, Z fields for Thruster Location
-    Gtk::Label* thruster_x_label = new Gtk::Label("x =");
+    Gtk::Label *thruster_x_label = new Gtk::Label("x =");
     thruster_x_entry = new Gtk::Entry();
-    Gtk::Label* thruster_y_label = new Gtk::Label("y =");
+    Gtk::Label *thruster_y_label = new Gtk::Label("y =");
     thruster_y_entry = new Gtk::Entry();
-    Gtk::Label* thruster_z_label = new Gtk::Label("z =");
+    Gtk::Label *thruster_z_label = new Gtk::Label("z =");
     thruster_z_entry = new Gtk::Entry();
 
     grid.attach(*thruster_x_label, 0, 17, 1, 1);
@@ -137,15 +140,15 @@ EngineThrusterDialog::EngineThrusterDialog(const std::string& engine, const std:
     grid.attach(*thruster_location_dropdown, 1, 20, 1, 1);
 
     // Thruster Orientation Subheader
-    Gtk::Label* thruster_orient_header = new Gtk::Label("Orient");
+    Gtk::Label *thruster_orient_header = new Gtk::Label("Orient");
     grid.attach(*thruster_orient_header, 0, 21, 2, 1);
 
     // Roll, Pitch, Yaw fields for Thruster Orientation
-    Gtk::Label* thruster_roll_label = new Gtk::Label("roll =");
+    Gtk::Label *thruster_roll_label = new Gtk::Label("roll =");
     thruster_roll_entry = new Gtk::Entry();
-    Gtk::Label* thruster_pitch_label = new Gtk::Label("pitch =");
+    Gtk::Label *thruster_pitch_label = new Gtk::Label("pitch =");
     thruster_pitch_entry = new Gtk::Entry();
-    Gtk::Label* thruster_yaw_label = new Gtk::Label("yaw =");
+    Gtk::Label *thruster_yaw_label = new Gtk::Label("yaw =");
     thruster_yaw_entry = new Gtk::Entry();
 
     grid.attach(*thruster_roll_label, 0, 22, 1, 1);
@@ -173,14 +176,15 @@ EngineThrusterDialog::EngineThrusterDialog(const std::string& engine, const std:
     dialogEng->signal_response().connect(sigc::mem_fun(*this, &EngineThrusterDialog::onResponse));
 }
 
-
-
 // Signal handler for dialog responses
-void EngineThrusterDialog::onResponse(int response_id) {
-   if (response_id == GTK_RESPONSE_ACCEPT) {
+void EngineThrusterDialog::onResponse(int response_id)
+{
+    if (response_id == GTK_RESPONSE_ACCEPT)
+    {
         onConfirm();
     }
-    else {
+    else
+    {
         onCancel();
     }
     // Close the dialog box after handling response
@@ -188,34 +192,36 @@ void EngineThrusterDialog::onResponse(int response_id) {
 }
 
 // Handle Confirm button press
-void EngineThrusterDialog::onConfirm() {
-    //std::cout << "Confirmed! Settings have been applied." << std::endl;
+void EngineThrusterDialog::onConfirm()
+{
+    // std::cout << "Confirmed! Settings have been applied." << std::endl;
     dialogEng->hide();
 }
 
 // Handle Cancel button press
-void EngineThrusterDialog::onCancel() {
-    //std::cout << "Canceled! No changes were applied." << std::endl;
+void EngineThrusterDialog::onCancel()
+{
+    // std::cout << "Canceled! No changes were applied." << std::endl;
     dialogEng->hide();
 }
 
-void EngineThrusterDialog::defaultValueFill([[maybe_unused]] const std::string& engine, [[maybe_unused]] const std::string& thruster) {
+void EngineThrusterDialog::defaultValueFill([[maybe_unused]] const std::string &engine, [[maybe_unused]] const std::string &thruster)
+{
     // Set default values for other fields (e.g., location, orientation, etc.)
-    PropulsionSubsystem propSubsystem;
     x_entry->set_text("0.0");
     y_entry->set_text("0.0");
     z_entry->set_text("0.0");
     roll_entry->set_text("0.0");
     pitch_entry->set_text("0.0");
     yaw_entry->set_text("0.0");
-    location_dropdown->set_active(0);  // Default to "IN"
-    orient_dropdown->set_active(0);  // Default to "DEG"
+    location_dropdown->set_active(0); // Default to "IN"
+    orient_dropdown->set_active(0);   // Default to "DEG"
     thruster_x_entry->set_text("0.0");
     thruster_y_entry->set_text("0.0");
     thruster_z_entry->set_text("0.0");
     thruster_roll_entry->set_text("0.0");
     thruster_pitch_entry->set_text("0.0");
     thruster_yaw_entry->set_text("0.0");
-    thruster_location_dropdown->set_active(0);  // Default to "IN"
-    thruster_orient_dropdown->set_active(0);  // Default to "DEG"
+    thruster_location_dropdown->set_active(0); // Default to "IN"
+    thruster_orient_dropdown->set_active(0);   // Default to "DEG"
 }

@@ -1,13 +1,15 @@
 #pragma once
 #include "gtkmm.h"
 #include "inc/Subsystem.hpp"
-#include "ExternalForce.hpp"  // Include the Force class
+#include "ExternalForce.hpp" // Include the Force class
+#include <iostream>
 
-class ExternalReactionsSubsystem : public Subsystem {
+class ExternalReactionsSubsystem : public Subsystem
+{
 public:
-    ExternalReactionsSubsystem();
+    ExternalReactionsSubsystem(std::shared_ptr<Gtk::Application> &app);
     void Create();
-    void tabSetup(Gtk::Grid& ex_grid);
+    void tabSetup(Gtk::Grid &ex_grid);
 
 protected:
     Gtk::Notebook m_notebook;
@@ -22,7 +24,7 @@ private:
     double directionX;
     double directionY;
     double directionZ;
-    Gtk::Entry* m_nameTextbox;
+    Gtk::Entry *m_nameTextbox;
     int m_forceCount;
 
     // Add a member to store the current Force object

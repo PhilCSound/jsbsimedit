@@ -1,30 +1,58 @@
 #pragma once
 
-#include <gtkmm.h>
+#include "gtkmm.h"
 #include <iostream>
 
-// Main application window class
-class MainWindow : public Gtk::Window {
-public:
-    MainWindow() {
-        // Set the window title and default size
-        set_title("Main Window with Notebook");
-        set_default_size(800, 600);
+#include "inc/XML_api.hpp"
 
-        // Add the notebook to the window
-        //add(main_notebook);
+#include "inc/Subsystem.hpp"
+#include "Aerodynamics/AeroDynamicsSubsystem.hpp"
+#include "BuoyantForces/BuoyantForcesSubsystem.hpp"
+#include "Metrics/MetricsSubsystem.hpp"
+#include "Propulsion/PropulsionSubsystem.hpp"
+#include "InputOutput/IOSubSystem.hpp"
+#include "MassBalance/MassBalanceSubsystem.hpp"
+#include "ExternalReactions/ExternalReactionsSubsystem.hpp"
+#include "GeneralInformation/GeneralInformationSubsystem.hpp"
+#include "GroundReactions/GroundReactionsSubsystem.hpp"
+#include "Systems/FlightControlSubsystem.hpp"
 
-        // Show the notebook
-        //main_notebook.show();
+namespace JSBEdit
+{
 
-        // Example: Create a new tab with JSBSim placeholder content
-        [[maybe_unused]]Gtk::Box* jsbsim_content = create_example_jsbsim_box();
+	class MainWindow : public Gtk::Window
+	{
+	public:
+		MainWindow(const Glib::RefPtr<Gtk::Application> &app);
+		~MainWindow() = default;
 
-        // Create a new tab with the JSBSim content
-        //create_tab(main_notebook, "JSBSim Data Tab", *jsbsim_content);
-    }
-    Gtk::Box* create_example_jsbsim_box();
-    void create_tab(Gtk::Notebook& notebook, const Glib::ustring& tab_name, Gtk::Widget& content);
-private:
-    Gtk::Notebook main_notebook; // The main notebook widget
+	protected:
+		// Signal handlers:
+		bool load_stack(const Glib::RefPtr<Gtk::Application> &app);
+		void on_menu_file_files_dialog();
+		void on_menu_file_quit();
+		void on_menu_file_new();
+		void on_menu_file_save(); // save
+
+		void on_dialog_finish(Glib::RefPtr<Gio::AsyncResult> &result);
+		void on_notebook_switch_page(Gtk::Widget * /* page */, guint page_num);
+
+		// Child widgets:
+		Gtk::Box m_Box;
+		Gtk::Stack m_stack{};
+		Gtk::StackSwitcher m_stackSwitcher{};
+
+		Glib::RefPtr<Gtk::Builder> m_refBuilder;
+		Glib::RefPtr<Gio::SimpleActionGroup> m_refActionGroup;
+
+		Glib::RefPtr<Gtk::RecentManager> m_refRecentManager;
+		Glib::RefPtr<Gtk::FileDialog> m_refFileDialog;
+		std::shared_ptr<Gtk::Application> m_appPointer;
+
+		Gtk::Notebook *m_Notebook{nullptr};
+
+		// Subsystems
+		std::vector<Subsystem *> m_Subsystems;
+	};
+
 };

@@ -1,20 +1,27 @@
 #pragma once
-
 #include <string>
 #include "Aircraft.hpp"
 #include "User.hpp"
 #include "Config.hpp"
 #include "inc/Subsystem.hpp"
+#include "XML/XMLLoad.hpp"
+#include "FileMetadata.hpp"
+#include "XML/XMLWriter.hpp"
+#include "Validation.hpp"
+#include "inc/XML_api.hpp"
 
-class GeneralInformationSubsystem : public Subsystem {
+#include <filesystem> // For `operations
+
+class GeneralInformationSubsystem : public Subsystem
+{
 public:
-    GeneralInformationSubsystem();
+    GeneralInformationSubsystem(std::shared_ptr<Gtk::Application> &app);
     void Create();
-    void LoadFromXML(const std::string& filePath);
-    void UpdateDataFromGUI(Aircraft& aircraft, User& user, Config& config);
+    void LoadFromXML(const std::string &filePath);
+    void UpdateDataFromGUI(Aircraft &aircraft, User &user, Config &config);
     void ValidateAndSave();
-    void SaveToXML(const std::string& filePath, const Aircraft& aircraft, const User& user, const Config& config);
-    void SetFilePath(const std::string& filePath);
+    void SaveToXML(const std::string &filePath, const Aircraft &aircraft, const User &user, const Config &config);
+    void SetFilePath(const std::string &filePath);
 
 private:
     // Define attributes to hold references to input widgets
@@ -31,5 +38,5 @@ private:
     Gtk::Entry m_Description;
     Gtk::Entry m_filePathTextbox;
     std::string m_FilePath;
-    Gtk::ComboBoxText* m_ReleaseLevelDropdown;
+    Gtk::ComboBoxText *m_ReleaseLevelDropdown;
 };
