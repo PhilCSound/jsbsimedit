@@ -52,6 +52,25 @@ MetricsSubsystem::MetricsSubsystem(std::shared_ptr<Gtk::Application> &app)
   vertex_data_units[node_name] = std::make_unique<Metrics::Vertex_Unit>(0.0, 0.0, 0.0, unit_map["location"]);
 }
 
+std::vector<std::optional<std::string>> MetricsSubsystem::InitializeGui()
+{
+  return std::vector<std::optional<std::string>>();
+}
+
+void MetricsSubsystem::LoadDefault()
+{
+}
+
+std::vector<std::optional<std::string>> MetricsSubsystem::LoadFromFile()
+{
+  return std::vector<std::optional<std::string>>();
+}
+
+std::vector<std::optional<std::string>> MetricsSubsystem::Validate()
+{
+  return std::vector<std::optional<std::string>>();
+}
+
 void MetricsSubsystem::Create()
 {
   m_grid.set_row_spacing(10);

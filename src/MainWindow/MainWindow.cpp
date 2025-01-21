@@ -136,7 +136,7 @@ namespace JSBEdit
         // I suspect this leaks.  Strongly suspect
 
         // create the Subsystems objects
-        m_Subsystems.push_back(new GeneralInformationSubsystem(m_appPointer));
+        // m_Subsystems.push_back(new GeneralInformationSubsystem(m_appPointer));
         m_Subsystems.push_back(new AeroDynamicsSubsystem(m_appPointer));
         m_Subsystems.push_back(new BuoyantForcesSubsystem(m_appPointer));
         m_Subsystems.push_back(new MetricsSubsystem(m_appPointer));
@@ -150,7 +150,8 @@ namespace JSBEdit
         // Call Create() for all subsystems
         for (const auto &i : m_Subsystems)
         {
-            i->Create();
+            i->InitializeGui();
+            i->LoadFromFile();
             m_Notebook->append_page(i->GetBox(), i->GetName());
         }
 

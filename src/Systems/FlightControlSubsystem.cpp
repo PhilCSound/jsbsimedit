@@ -1,4 +1,5 @@
 #include "Systems/FlightControlSubsystem.hpp"
+#include "FlightControlSubsystem.hpp"
 
 namespace DragDrop
 {
@@ -8,8 +9,10 @@ namespace DragDrop
     {
     }
 
-    void FlightControlSubsystem::Create()
+    std::vector<std::optional<std::string>> FlightControlSubsystem::InitializeGui()
     {
+        std::vector<std::optional<std::string>> errors{};
+
         m_boxLayout.set_orientation(Gtk::Orientation::VERTICAL);
         try
         {
@@ -17,7 +20,8 @@ namespace DragDrop
         }
         catch (const Glib::Error &ex)
         {
-            std::cerr << "Error loading flightControl.xml" << ex.what() << std::endl;
+            errors.push_back({"Error loading flightControl.xml\n"});
+            return errors;
         }
 
         std::vector<std::string> widgetContainers{"stackBox", "componentBox", "dividerBox", "canvasBox"};
@@ -41,7 +45,10 @@ namespace DragDrop
                 m_boxLayout.append(*boxWidget);
             }
             else
-                std::cerr << "Error loading GUI widget: " << i << "from file.\n";
+            {
+                errors.push_back({"Error loading GUI widget in Flight Control.\n"});
+                return errors;
+            }
         }
 
         // Get all the image widgets, and add them to a container widget:
@@ -55,27 +62,26 @@ namespace DragDrop
                 imgWidget->add_controller(dragController);
             }
             else
-                std::cout << "Error finding: " << COMPONENT_NAMES[i] << " widget.\n";
+                errors.push_back({"Error finding: " + COMPONENT_NAMES[i] + " widget.\n"});
         }
         m_notebook.set_hexpand(true);
         m_notebook.set_show_border(false);
         // signal handler for changing channel tabs
         m_notebook.signal_switch_page().connect(sigc::mem_fun(*this, &FlightControlSubsystem::on_notebook_switch_page));
-        LoadXMLData();
+        return errors;
     }
 
-    void FlightControlSubsystem::CreateNewTab(const std::string &name)
+    void FlightControlSubsystem::LoadDefault()
     {
-        Gtk::Box emptyBox{};
-        m_notebook.append_page(emptyBox, name);
-        m_notebook.show();
     }
 
-    void FlightControlSubsystem::LoadXMLData()
+    std::vector<std::optional<std::string>> FlightControlSubsystem::LoadFromFile()
     {
+        std::vector<std::optional<std::string>> errors;
+
         auto node = xmlptr()->GetNode("fdm_config").FindChild(m_systemName);
         if (!node)
-            std::cout << "Error loading: " << m_systemName << " from file.";
+            errors.push_back({"Error loading: " + m_systemName + " from file.\n"});
         else
         {
             for (auto &i : node.GetChildren())
@@ -85,7 +91,7 @@ namespace DragDrop
                     auto nameAtt = i.GetAttribute("name");
                     if (nameAtt.second.empty())
                     {
-                        std::cout << "Error loading: " << m_systemName << "\n";
+                        errors.push_back({"Error loading: " + m_systemName + " from file.\n"});
                         continue;
                     }
                     if (m_canvas.CreateNewChannel(nameAtt.second))
@@ -98,6 +104,19 @@ namespace DragDrop
                     std::cout << i.GetText() << "\n";
             }
         }
+        return errors;
+    }
+
+    std::vector<std::optional<std::string>> FlightControlSubsystem::Validate()
+    {
+        return std::vector<std::optional<std::string>>();
+    }
+
+    void FlightControlSubsystem::CreateNewTab(const std::string &name)
+    {
+        Gtk::Box emptyBox{};
+        m_notebook.append_page(emptyBox, name);
+        m_notebook.show();
     }
 
     Glib::RefPtr<Gdk::ContentProvider> FlightControlSubsystem::SetDragData(int _data)

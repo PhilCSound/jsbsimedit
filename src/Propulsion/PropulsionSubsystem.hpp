@@ -17,7 +17,11 @@ class PropulsionSubsystem : public Subsystem, public Gtk::Window
 {
 public:
     PropulsionSubsystem(std::shared_ptr<Gtk::Application> &app); // Constructor to initialize the window and UI components
-    void Create();                                               // Method to create and display the UI elements
+    void Create();
+    std::vector<std::optional<std::string>> InitializeGui() override;
+    void LoadDefault() override;
+    std::vector<std::optional<std::string>> LoadFromFile() override;
+    std::vector<std::optional<std::string>> Validate() override; // Method to create and display the UI elements
     void on_button_clicked();                                    // Callback for button click events
     bool checkSelect(const std::string &inp);
     std::string GetCurrentPlatformDebug();

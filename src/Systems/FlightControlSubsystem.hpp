@@ -17,9 +17,12 @@ namespace DragDrop
 		FlightControlSubsystem(std::shared_ptr<Gtk::Application> &app);
 		~FlightControlSubsystem() = default;
 
-		void Create() override;
+		std::vector<std::optional<std::string>> InitializeGui() override;
+		void LoadDefault() override;
+		std::vector<std::optional<std::string>> LoadFromFile() override;
+		std::vector<std::optional<std::string>> Validate() override;
+
 		void CreateNewTab(const std::string &name);
-		void LoadXMLData();
 
 	private:
 		// Signal handlers

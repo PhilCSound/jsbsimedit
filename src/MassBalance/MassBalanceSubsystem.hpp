@@ -16,6 +16,10 @@ class MassBalanceSubsystem : public Subsystem
 public:
   MassBalanceSubsystem(std::shared_ptr<Gtk::Application> &app);
   void Create();
+  std::vector<std::optional<std::string>> InitializeGui() override;
+  void LoadDefault() override;
+  std::vector<std::optional<std::string>> LoadFromFile() override;
+  std::vector<std::optional<std::string>> Validate() override;
   void on_button_pressed();
 
   // private:

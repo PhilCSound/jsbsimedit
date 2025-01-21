@@ -384,6 +384,25 @@ void MassBalanceSubsystem::Create()
   m_grid.attach(*button_del_mass, 4, 14, 4, 1);
 }
 
+std::vector<std::optional<std::string>> MassBalanceSubsystem::InitializeGui()
+{
+  return std::vector<std::optional<std::string>>();
+}
+
+void MassBalanceSubsystem::LoadDefault()
+{
+}
+
+std::vector<std::optional<std::string>> MassBalanceSubsystem::LoadFromFile()
+{
+  return std::vector<std::optional<std::string>>();
+}
+
+std::vector<std::optional<std::string>> MassBalanceSubsystem::Validate()
+{
+  return std::vector<std::optional<std::string>>();
+}
+
 void MassBalanceSubsystem::on_button_pressed()
 {
   auto point_mass_dialogue = new PointMassDialogue();

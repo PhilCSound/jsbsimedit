@@ -14,6 +14,11 @@ class MetricsSubsystem : public Subsystem
 public:
   MetricsSubsystem(std::shared_ptr<Gtk::Application> &app);
 
+  std::vector<std::optional<std::string>> InitializeGui() override;
+  void LoadDefault() override;
+  std::vector<std::optional<std::string>> LoadFromFile() override;
+  std::vector<std::optional<std::string>> Validate() override;
+
   void Create();
 
   void load_data(JSBEdit::XMLDoc *doc_ptr);

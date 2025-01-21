@@ -361,6 +361,25 @@ void PropulsionSubsystem::Create()
     }
 }
 
+std::vector<std::optional<std::string>> PropulsionSubsystem::InitializeGui()
+{
+    return std::vector<std::optional<std::string>>();
+}
+
+void PropulsionSubsystem::LoadDefault()
+{
+}
+
+std::vector<std::optional<std::string>> PropulsionSubsystem::LoadFromFile()
+{
+    return std::vector<std::optional<std::string>>();
+}
+
+std::vector<std::optional<std::string>> PropulsionSubsystem::Validate()
+{
+    return std::vector<std::optional<std::string>>();
+}
+
 std::string PropulsionSubsystem::EngineOrThruster(const std::string &pulledInput)
 {
     // List of engine types in xml
