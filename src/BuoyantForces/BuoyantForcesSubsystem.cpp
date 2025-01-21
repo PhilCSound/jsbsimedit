@@ -8,9 +8,10 @@ BuoyantForcesSubsystem::BuoyantForcesSubsystem(std::shared_ptr<Gtk::Application>
 {
 }
 
-void BuoyantForcesSubsystem::Create()
+std::vector<std::optional<std::string>> BuoyantForcesSubsystem::InitializeGui()
 {
     // std::cout << "in BuoyantForcesSubsystem::Create" << std::endl;
+    std::vector<std::optional<std::string>> errors{};
 
     m_grid.set_row_spacing(10);
     m_grid.set_column_spacing(10);
@@ -55,8 +56,23 @@ void BuoyantForcesSubsystem::Create()
     }
     catch (const std::exception &e)
     {
-        std::cerr << "Error loading XML in Create(): " << e.what() << std::endl;
+        errors.push_back({"Error loading XML in Create()\n"});
     }
+    return errors;
+}
+
+void BuoyantForcesSubsystem::LoadDefault()
+{
+}
+
+std::vector<std::optional<std::string>> BuoyantForcesSubsystem::LoadFromFile()
+{
+    return std::vector<std::optional<std::string>>();
+}
+
+std::vector<std::optional<std::string>> BuoyantForcesSubsystem::Validate()
+{
+    return std::vector<std::optional<std::string>>();
 }
 
 void BuoyantForcesSubsystem::SaveXMLData()

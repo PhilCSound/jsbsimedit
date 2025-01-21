@@ -8,8 +8,10 @@ class ExternalReactionsSubsystem : public Subsystem
 {
 public:
     ExternalReactionsSubsystem(std::shared_ptr<Gtk::Application> &app);
-    void Create();
-    void tabSetup(Gtk::Grid &ex_grid);
+    std::vector<std::optional<std::string>> InitializeGui() override;
+    void LoadDefault() override;
+    std::vector<std::optional<std::string>> LoadFromFile() override;
+    std::vector<std::optional<std::string>> Validate() override;
 
 protected:
     Gtk::Notebook m_notebook;

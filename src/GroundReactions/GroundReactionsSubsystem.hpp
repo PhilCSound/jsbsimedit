@@ -12,6 +12,10 @@ class GroundReactionsSubsystem : public Subsystem
 public:
     GroundReactionsSubsystem(std::shared_ptr<Gtk::Application> &app);
     void Create();
+    std::vector<std::optional<std::string>> InitializeGui() override;
+    void LoadDefault() override;
+    std::vector<std::optional<std::string>> LoadFromFile() override;
+    std::vector<std::optional<std::string>> Validate() override;
 
 private:
     std::vector<Contact> contacts;

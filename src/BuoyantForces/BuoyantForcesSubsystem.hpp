@@ -18,7 +18,10 @@ class BuoyantForcesSubsystem : public Subsystem
 {
 public:
   BuoyantForcesSubsystem(std::shared_ptr<Gtk::Application> &app);
-  void Create();
+  std::vector<std::optional<std::string>> InitializeGui() override;
+  void LoadDefault() override;
+  std::vector<std::optional<std::string>> LoadFromFile() override;
+  std::vector<std::optional<std::string>> Validate() override;
   void SaveXMLData();
   void LoadXMLData();
   void UpdateData();

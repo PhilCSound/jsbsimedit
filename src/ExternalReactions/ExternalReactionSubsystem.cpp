@@ -6,9 +6,9 @@ ExternalReactionsSubsystem::ExternalReactionsSubsystem(std::shared_ptr<Gtk::Appl
     m_forceCount = 2;
 }
 
-void ExternalReactionsSubsystem::Create()
+std::vector<std::optional<std::string>> ExternalReactionsSubsystem::InitializeGui()
 {
-    // std::cout << "In ExternalReactionsSubsystem::Create" << std::endl;
+    std::vector<std::optional<std::string>> errors{};
 
     m_grid.set_row_spacing(10);
     m_grid.set_column_spacing(10);
@@ -135,29 +135,30 @@ void ExternalReactionsSubsystem::Create()
     m_grid.attach(*frameDropDownList, 1, 5);
 
     // Connect Force Type Dropdown
-    forceTypeDropDownList->signal_changed().connect([forceTypeDropDownList, locationXTextbox, locationYTextbox, locationZTextbox, directionXTextbox, directionYTextbox, directionZTextbox]()
-                                                    {
-                                                        std::string selectedType = forceTypeDropDownList->get_active_text();
-                                                        if (selectedType == "Push-back")
-                                                        {
-                                                            locationXTextbox->set_text("1.0");
-                                                            locationYTextbox->set_text("0.0");
-                                                            locationZTextbox->set_text("0.0");
-                                                            directionXTextbox->set_text("-2.0");
-                                                            directionYTextbox->set_text("0.0");
-                                                            directionZTextbox->set_text("-1.0");
-                                                        }
-                                                        else if (selectedType == "Hook")
-                                                        {
-                                                            locationXTextbox->set_text("0.5");
-                                                            locationYTextbox->set_text("0.5");
-                                                            locationZTextbox->set_text("0.5");
-                                                            directionXTextbox->set_text("2.0");
-                                                            directionYTextbox->set_text("1.0");
-                                                            directionZTextbox->set_text("-1.0");
-                                                        }
-                                                        // Additional force types can be added here
-                                                    });
+    forceTypeDropDownList->signal_changed().connect(
+        [forceTypeDropDownList, locationXTextbox, locationYTextbox, locationZTextbox, directionXTextbox, directionYTextbox, directionZTextbox]()
+        {
+            std::string selectedType = forceTypeDropDownList->get_active_text();
+            if (selectedType == "Push-back")
+            {
+                locationXTextbox->set_text("1.0");
+                locationYTextbox->set_text("0.0");
+                locationZTextbox->set_text("0.0");
+                directionXTextbox->set_text("-2.0");
+                directionYTextbox->set_text("0.0");
+                directionZTextbox->set_text("-1.0");
+            }
+            else if (selectedType == "Hook")
+            {
+                locationXTextbox->set_text("0.5");
+                locationYTextbox->set_text("0.5");
+                locationZTextbox->set_text("0.5");
+                directionXTextbox->set_text("2.0");
+                directionYTextbox->set_text("1.0");
+                directionZTextbox->set_text("-1.0");
+            }
+            // Additional force types can be added here
+        });
 
     // Initial Tabs
     m_pages.push_back(std::make_unique<Gtk::Grid>());
@@ -165,4 +166,20 @@ void ExternalReactionsSubsystem::Create()
 
     m_pages.push_back(std::make_unique<Gtk::Grid>());
     m_notebook.append_page(*m_pages.back(), "Force 2");
+
+    return errors;
+}
+
+void ExternalReactionsSubsystem::LoadDefault()
+{
+}
+
+std::vector<std::optional<std::string>> ExternalReactionsSubsystem::LoadFromFile()
+{
+    return std::vector<std::optional<std::string>>();
+}
+
+std::vector<std::optional<std::string>> ExternalReactionsSubsystem::Validate()
+{
+    return std::vector<std::optional<std::string>>();
 }

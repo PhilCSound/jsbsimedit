@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <memory>
+#include <optional>
 #include "gtkmm.h"
 
 class Subsystem
@@ -19,7 +20,19 @@ public:
 
   /// @brief Create makes all the widgets, and initializes and classes.
   /// Called before adding the subsystem to the Subsystem group.
-  virtual void Create() = 0;
+  /// @returns Errors loading the file should be returned here..
+  virtual std::vector<std::optional<std::string>> InitializeGui() = 0;
+
+  /// @brief Fill all values with a default template.
+  virtual void LoadDefault() = 0;
+
+  /// @brief Call when loading from file.
+  /// @returns Errors loading the file should be returned here..
+  virtual std::vector<std::optional<std::string>> LoadFromFile() = 0;
+
+  /// @brief Call to validate all fields, validation should be done here in this method.
+  /// @returns If there are any errors are done in validation, they should be returned here.
+  virtual std::vector<std::optional<std::string>> Validate() = 0;
 
   /// @brief Returns a reference of the box containing widgets of the subsystem.
   [[nodiscard]]

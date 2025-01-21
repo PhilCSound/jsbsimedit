@@ -5,7 +5,7 @@ IOSubSystem::IOSubSystem(std::shared_ptr<Gtk::Application> &app)
 {
 }
 
-void IOSubSystem::Create()
+std::vector<std::optional<std::string>> IOSubSystem::InitializeGui()
 {
   // std::cout << "\nin IOSubsystem::Create\n" << std::endl;
 
@@ -14,4 +14,19 @@ void IOSubSystem::Create()
 
   // call MainWindow constructor
   MainWindow mainWindow(m_grid);
+  return std::vector<std::optional<std::string>>();
+}
+
+void IOSubSystem::LoadDefault()
+{
+}
+
+std::vector<std::optional<std::string>> IOSubSystem::LoadFromFile()
+{
+  return std::vector<std::optional<std::string>>();
+}
+
+std::vector<std::optional<std::string>> IOSubSystem::Validate()
+{
+  return std::vector<std::optional<std::string>>();
 }
