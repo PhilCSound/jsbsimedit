@@ -136,7 +136,7 @@ namespace JSBEdit
         // I suspect this leaks.  Strongly suspect
 
         // create the Subsystems objects
-        // m_Subsystems.push_back(new GeneralInformationSubsystem(m_appPointer));
+        m_Subsystems.push_back(new GeneralInformationSubsystem(m_appPointer));
         m_Subsystems.push_back(new AeroDynamicsSubsystem(m_appPointer));
         m_Subsystems.push_back(new BuoyantForcesSubsystem(m_appPointer));
         m_Subsystems.push_back(new MetricsSubsystem(m_appPointer));

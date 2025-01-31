@@ -1,8 +1,5 @@
 #pragma once
 #include <string>
-#include "Aircraft.hpp"
-#include "User.hpp"
-#include "Config.hpp"
 #include "inc/Subsystem.hpp"
 #include "XML/XMLLoad.hpp"
 #include "FileMetadata.hpp"
@@ -16,27 +13,30 @@ class GeneralInformationSubsystem : public Subsystem
 {
 public:
     GeneralInformationSubsystem(std::shared_ptr<Gtk::Application> &app);
-    void Create();
-    void LoadFromXML(const std::string &filePath);
-    void UpdateDataFromGUI(Aircraft &aircraft, User &user, Config &config);
-    void ValidateAndSave();
-    void SaveToXML(const std::string &filePath, const Aircraft &aircraft, const User &user, const Config &config);
-    void SetFilePath(const std::string &filePath);
+    std::vector<std::optional<std::string>> InitializeGui() override;
+    void LoadDefault() override;
+    std::vector<std::optional<std::string>> LoadFromFile() override;
+    std::vector<std::optional<std::string>> Validate() override;
 
 private:
     // Define attributes to hold references to input widgets
-    Gtk::Entry m_AircraftNameEntry;
-    Gtk::Entry m_FileNameEntry;
-    Gtk::Entry m_ReleaseLevelEntry;
-    Gtk::Entry m_ConfigVersionEntry;
-    Gtk::Entry m_FlightModelVersionEntry;
-    Gtk::Entry m_AuthorEntry;
-    Gtk::Entry m_EmailEntry;
-    Gtk::Entry m_OrganizationEntry;
-    Gtk::Entry m_Limitations;
-    Gtk::Entry m_Notes;
-    Gtk::Entry m_Description;
-    Gtk::Entry m_filePathTextbox;
-    std::string m_FilePath;
-    Gtk::ComboBoxText *m_ReleaseLevelDropdown;
+    Gtk::Entry m_aircraftNameEntry{};
+    Gtk::Entry m_fileNameEntry{};
+    Gtk::Entry m_revisionNumberEntry{};
+    Gtk::Entry m_configVersionEntry{};
+    Gtk::Entry m_copyrightEntry{};
+    Gtk::Entry m_flightModelVersionEntry{};
+    Gtk::Entry m_authorEntry{};
+    Gtk::Entry m_emailEntry{};
+    Gtk::Entry m_organizationEntry{};
+    Gtk::Entry m_licenseEntry{};
+    Gtk::Entry m_licenseURLEntry{};
+    Gtk::Entry m_limitationsEntry{};
+    Gtk::Entry m_sensitivityEntry{};
+    Gtk::Entry m_notes{};
+    Gtk::Entry m_description{};
+    Gtk::Entry m_filePathTextbox{};
+    std::string m_filePath{};
+    Gtk::Calendar m_fileCreationDate{};
+    Gtk::ComboBoxText m_releaseLevelDropdown{};
 };
