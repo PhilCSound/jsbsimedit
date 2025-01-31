@@ -10,7 +10,7 @@ namespace GUI
         // m_textEntry.signal_changed(std::bind(&));
     }
 
-    void TextBox::AppendToGrid(const Gtk::Grid &grid, int x, int y, int w, int h)
+    void TextBox::AppendToGrid(Gtk::Grid &grid, int x, int y, int w, int h)
     {
         grid.attach(m_label, x, y, w, h);
         grid.attach(m_textEntry, x, y + 1, w, h);
