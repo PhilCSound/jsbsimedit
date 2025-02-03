@@ -10,69 +10,36 @@ std::vector<std::optional<std::string>> GeneralInformationSubsystem::InitializeG
   m_grid.set_row_spacing(12);
   m_grid.set_column_spacing(10);
 
-  // Aircraft label and entry
-  auto aircraftNameLabel = Gtk::make_managed<Gtk::Label>("Aircraft Name:");
-  m_grid.attach(*aircraftNameLabel, 0, 0);
-  m_grid.attach(m_aircraftNameEntry, 0, 1);
+  // Values are KEY(xpath), Label Name, x, y, width, height on the grid
+  std::vector<std::tuple<std::string, std::string, int, int, int, int>> uiWidgets;
+  uiWidgets.push_back({"1", "Aircraft Name:", 0, 0, 1, 1});
+  uiWidgets.push_back({"2", "Release Level:", 0, 2, 1, 1});
+  uiWidgets.push_back({"3", "Model Version #:", 0, 4, 1, 1});
+  uiWidgets.push_back({"/fdm_config/fileheader/author", "Author:", 0, 6, 1, 1});
+  uiWidgets.push_back({"5", "Author Email:", 0, 8, 1, 1});
+  uiWidgets.push_back({"6", "Organization:", 0, 10, 1, 1});
+  uiWidgets.push_back({"/fdm_config/fileheader/license/licenseName", "License:", 0, 12, 1, 1});
+  uiWidgets.push_back({"/fdm_config/fileheader/license/licenseURL", "License URL:", 0, 14, 1, 1});
+  uiWidgets.push_back({"456", "Sensitivity:", 1, 0, 1, 1});
+  // Calendar isn't a widget... for now...
+  //  uiWidgets.push_back({"", "File Creation Date:", 1, 1, 1, 1});
+  uiWidgets.push_back({"/fdm_config/fileheader/version", "Revision Version:", 1, 10, 1, 1});
+  uiWidgets.push_back({"37", "Copyright:", 1, 12, 1, 1});
+  // m_guiWidgets.insert({"", std::make_unique<GUI::TextBox>("", "")})
 
-  // Release level and entry
-  auto releaseLevelLabel = Gtk::make_managed<Gtk::Label>("Release Level:");
-  m_grid.attach(*releaseLevelLabel, 0, 2);
-  m_releaseLevelDropdown.append("PRODUCTION");
-  m_releaseLevelDropdown.append("ALPHA");
-  m_releaseLevelDropdown.append("BETA");
-  m_releaseLevelDropdown.set_active(0);
-  m_grid.attach(m_releaseLevelDropdown, 0, 3);
-
-  // Versioning label and entry
-  auto versionLabel = Gtk::make_managed<Gtk::Label>("Model Version #:");
-  m_grid.attach(*versionLabel, 0, 4);
-  m_grid.attach(m_flightModelVersionEntry, 0, 5);
-
-  // Author label and entry
-  auto authorLabel = Gtk::make_managed<Gtk::Label>("Author:");
-  m_grid.attach(*authorLabel, 0, 6);
-  m_grid.attach(m_authorEntry, 0, 7);
-
-  // Author Email label and entry
-  auto authorEmailLabel = Gtk::make_managed<Gtk::Label>("Author Email:");
-  m_grid.attach(*authorEmailLabel, 0, 8);
-  m_grid.attach(m_emailEntry, 0, 9);
-
-  // Organization label and entry
-  auto orgLabel = Gtk::make_managed<Gtk::Label>("Organization:");
-  m_grid.attach(*orgLabel, 0, 10);
-  m_grid.attach(m_organizationEntry, 0, 11);
-
-  // License label and entry
-  auto licLabel = Gtk::make_managed<Gtk::Label>("License:");
-  m_grid.attach(*licLabel, 0, 12);
-  m_grid.attach(m_licenseEntry, 0, 13);
-
-  // License URL label and entry
-  auto licURLLabel = Gtk::make_managed<Gtk::Label>("License URL:");
-  m_grid.attach(*licURLLabel, 0, 14);
-  m_grid.attach(m_licenseURLEntry, 0, 15);
-
-  // Sensitivity label and entry
-  auto sensitivityLabel = Gtk::make_managed<Gtk::Label>("Sensitivity:");
-  m_grid.attach(*sensitivityLabel, 3, 0);
-  m_grid.attach(m_sensitivityEntry, 3, 1);
+  // Loads all the widgets we typed up above^
+  for (const auto &i : uiWidgets)
+  {
+    // Create widgets.
+    auto widget = std::make_unique<GUI::TextBox>(std::get<0>(i), std::get<1>(i));
+    widget->AppendToGrid(m_grid, std::get<2>(i), std::get<3>(i), std::get<4>(i), std::get<5>(i));
+    m_guiWidgets.insert({std::get<0>(i), std::move(widget)});
+  }
 
   // File Creation Date
   auto creationLabel = Gtk::make_managed<Gtk::Label>("File Creation Date:");
-  m_grid.attach(*creationLabel, 3, 2);
-  m_grid.attach(m_fileCreationDate, 3, 3, 1, 6);
-
-  // Revision label and entry
-  auto revisionLabel = Gtk::make_managed<Gtk::Label>("Revision Version:");
-  m_grid.attach(*revisionLabel, 3, 10);
-  m_grid.attach(m_revisionNumberEntry, 3, 11);
-
-  // Copyright label and entry
-  auto copyLabel = Gtk::make_managed<Gtk::Label>("Copyright:");
-  m_grid.attach(*copyLabel, 3, 12);
-  m_grid.attach(m_copyrightEntry, 3, 13);
+  m_grid.attach(*creationLabel, 1, 2);
+  m_grid.attach(m_fileCreationDate, 1, 3, 1, 6);
 
   return std::vector<std::optional<std::string>>();
 }
@@ -83,7 +50,18 @@ void GeneralInformationSubsystem::LoadDefault()
 
 std::vector<std::optional<std::string>> GeneralInformationSubsystem::LoadFromFile()
 {
-  return std::vector<std::optional<std::string>>();
+  std::vector<std::optional<std::string>> errors{};
+
+  for (auto &i : m_guiWidgets)
+  {
+    auto node = xmlptr()->GetNode(i.first);
+    if (!node)
+      errors.push_back(i.first);
+    else
+      i.second->SetData(node.GetText());
+  }
+
+  return errors;
 }
 
 std::vector<std::optional<std::string>> GeneralInformationSubsystem::Validate()

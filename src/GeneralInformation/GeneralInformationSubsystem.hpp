@@ -1,11 +1,15 @@
 #pragma once
 #include <string>
+#include <map>
+#include <memory>
 #include "inc/Subsystem.hpp"
 #include "XML/XMLLoad.hpp"
 #include "FileMetadata.hpp"
 #include "XML/XMLWriter.hpp"
 #include "Validation.hpp"
 #include "inc/XML_api.hpp"
+#include "inc/IObserver.hpp"
+#include "GUI/TextBox.hpp"
 
 #include <filesystem> // For `operations
 
@@ -20,6 +24,7 @@ public:
 
 private:
     // Define attributes to hold references to input widgets
+    std::map<std::string, std::unique_ptr<GUI::InputField>> m_guiWidgets{};
     Gtk::Entry m_aircraftNameEntry{};
     Gtk::Entry m_fileNameEntry{};
     Gtk::Entry m_revisionNumberEntry{};
